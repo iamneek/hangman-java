@@ -51,27 +51,41 @@ public class Hangman {
 
     static boolean gameOver = false;
     static int life = 7;
+    static String word = getWord();
+    static ArrayList<Integer> matchIndexList = new ArrayList<>();
+    static String[] wordFill = new String[word.length()];
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String word = getWord();
+
         System.out.println("Word: " + word);
+
         int wordLength = word.length();
+
         System.out.println("Welcome to Hangman, your first word is "+ wordLength + " character long.\n");
-        printHangman(wordLength);
+
+        for (int i = 0; i < word.length(); i++) {
+            wordFill[i] = "_";
+        }
+
+        printHangman(new ArrayList<Integer>());
+
         while (life > 0 && !gameOver) {
-            System.out.println("\nEnter a character ( ♥ x" + life + " ): ");
+            System.out.print("\nEnter a character ( ♥ x" + life + " ): ");
             String userInputRaw = scanner.nextLine();
+
             if(userInputRaw.length() > 1) {
                 System.out.println("\nInvalid input! Please enter a single character.\n");
                 continue;
             }
+
             char userInput = userInputRaw.charAt(0);
             CheckWord(userInput, word);
         }
+
         scanner.close();
     }
 
-    public static void printHangman(int wordLength) {
+    public static void printHangman(ArrayList<Integer> matchedIndex) {
         switch (life) {
             case 7:
                 System.out.println(hangmanFigures[0]);
@@ -100,27 +114,44 @@ public class Hangman {
             default:
                 break;
         }
-        for (int i = 0; i < wordLength; i++) {
-            System.out.print("_ ");
+
+        for (Integer index : matchedIndex) {
+            wordFill[index] = String.valueOf(word.charAt(index));
+        }
+
+        for (int i = 0; i < word.length(); i++) {
+                System.out.print(wordFill[i] + " ");
         }
     }
 
+
     public static String getWord() {
         String[] words = {"Formula", "Java", "World", "Alphabet", "Instructor", "Foreigner", "Worker",
-    "Sophisticated", "Honor", "Information", "Technology", "Python", "Adequate", "Appropriate",
-    "Human", "Sapeins", "Bachelor", "Contradiction", "Symphony", "Crazy", "Mother", "Brother", "Son", "Mamina"};
-        String word = words[ThreadLocalRandom.current().nextInt(0, words.length)];
-        return word;
+                        "Sophisticated", "Honor", "Information", "Technology", "Python", "Adequate", "Appropriate",
+                        "Human", "Sapiens", "Bachelor", "Contradiction", "Symphony", "Crazy", "Mother", "Brother", "Son", "Mamina"};
+        String wordGen = words[ThreadLocalRandom.current().nextInt(0, words.length)];
+        return wordGen;
     }
+
 
     public static void CheckWord(char userInput, String word) {
         String[] wordSplit = word.split("");
-        ArrayList<Integer> matchIndexList = new ArrayList<>();
+        boolean atLeastOne = false;
 
         for (int i = 0; i < wordSplit.length; i++) {
-            if (wordSplit[i].charAt(0) == userInput && !(matchIndexList.contains(i))) {
+            if (wordSplit[i].charAt(0) == userInput) {
+                atLeastOne = true;
                 System.out.println("Character " + wordSplit[i] +" matches.");
+                if(!matchIndexList.contains(i)) {
+                    matchIndexList.add(i);
+                }
             }
+        }
+
+        printHangman(matchIndexList);
+
+        if(!atLeastOne) {
+            life--;
         }
 
     }

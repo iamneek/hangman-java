@@ -80,6 +80,15 @@ public class Hangman {
 
             char userInput = userInputRaw.charAt(0);
             CheckWord(userInput, word);
+            String userWord = String.join("", wordFill);
+            if (word.equals(userWord)) {
+                System.out.println("\nYou Guessed it on the "+(7-life+1)+"th try!");
+                gameOver = true;
+            }
+        }
+
+        if (life == 0) {
+            System.out.println("\nYou did not guess the correct word :(\nThe word was "+ word);
         }
 
         scanner.close();
@@ -139,7 +148,7 @@ public class Hangman {
         boolean atLeastOne = false;
 
         for (int i = 0; i < wordSplit.length; i++) {
-            if (wordSplit[i].charAt(0) == userInput) {
+            if (wordSplit[i].charAt(0) == userInput || wordSplit[i].charAt(0) == String.valueOf(userInput).toUpperCase().charAt(0)) {
                 atLeastOne = true;
                 System.out.println("Character " + wordSplit[i] +" matches.");
                 if(!matchIndexList.contains(i)) {
@@ -152,7 +161,8 @@ public class Hangman {
 
         if(!atLeastOne) {
             life--;
+            System.out.println("");
+            printHangman(matchIndexList);
         }
-
     }
 }

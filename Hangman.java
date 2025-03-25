@@ -1,6 +1,9 @@
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Hangman {
     static String[] hangmanFigures = {
@@ -27,50 +30,50 @@ public class Hangman {
                     =========
                     """,
             """
-                        +---+
-                        |   |
-                        O   |
-                        |   |
-                            |
-                            |
+                    +---+
+                    |   |
+                    O   |
+                    |   |
+                        |
+                        |
                     =========
                         """,
             """
-                        +---+
-                        |   |
-                        O   |
-                       /|   |
-                            |
-                            |
-                    =========
-                        """,
+                     +---+
+                     |   |
+                     O   |
+                    /|   |
+                         |
+                         |
+                     =========
+                         """,
             """
-                      +---+
-                      |   |
-                      O   |
-                     /|\\ |
-                          |
-                          |
-                    =========
-                            """,
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                         |
+                         |
+                     =========
+                             """,
             """
-                      +---+
-                      |   |
-                      O   |
-                     /|\\ |
-                     /    |
-                          |
-                    =========
-                                        """,
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                    /    |
+                         |
+                     =========
+                                             """,
             """
-                      +---+
-                      |   |
-                      O   |
-                     /|\\ |
-                     / \\ |
-                          |
-                    =========
-                                        """
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                    / \\  |
+                         |
+                     =========
+                                         """
     };
 
     static boolean gameOver = false;
@@ -81,8 +84,6 @@ public class Hangman {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Word: " + word);
 
         int wordLength = word.length();
 
@@ -159,13 +160,40 @@ public class Hangman {
     }
 
     public static String getWord() {
-        String[] words = { "Formula", "Java", "World", "Alphabet", "Instructor", "Foreigner", "Worker",
-                "Sophisticated", "Honor", "Information", "Technology", "Python", "Adequate", "Appropriate",
-                "Human", "Sapiens", "Bachelor", "Contradiction", "Symphony", "Crazy", "Mother", "Brother", "Son",
-                "Mamina" };
-        String wordGen = words[ThreadLocalRandom.current().nextInt(0, words.length)];
-        return wordGen;
+
+        try {
+            File wordFile = new File("WordList.csv");
+            Scanner WordScanner = new Scanner(wordFile);
+            ArrayList<String> wordList = new ArrayList<>();
+            while (WordScanner.hasNextLine()) {
+                wordList.add(WordScanner.nextLine());
+                int randomIndex = ThreadLocalRandom.current().nextInt(0, wordList.size());
+                String wordGen = wordList.get(randomIndex);
+                return wordGen;
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+        return "";
     }
+
+    // public static String getWord() {
+
+    // try {
+    // File wordFile = new File("Words.txt");
+    // Scanner WordScanner = new Scanner(wordFile);
+    // ArrayList<String> wordList = new ArrayList<>();
+    // while (WordScanner.hasNextLine()) {
+    // wordList.add(WordScanner.nextLine());
+    // int randomIndex = ThreadLocalRandom.current().nextInt(0, wordList.size());
+    // String wordGen = wordList.get(randomIndex);
+    // return wordGen;
+    // }
+    // } catch (FileNotFoundException e) {
+    // System.out.println(e);
+    // }
+    // return "";
+    // }
 
     public static void CheckWord(char userInput, String word) {
         String[] wordSplit = word.split("");

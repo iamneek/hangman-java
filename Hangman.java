@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -78,9 +77,11 @@ public class Hangman {
 
     static boolean gameOver = false;
     static int life = 7;
-    static String word = getWord();
+    static String[] returned = getWord();
+    static String word = returned[0];
     static ArrayList<Integer> matchIndexList = new ArrayList<>();
     static String[] wordFill = new String[word.length()];
+    static String hint = returned[1];
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -88,7 +89,7 @@ public class Hangman {
         int wordLength = word.length();
 
         System.out.println("Welcome to Hangman, your first word is " + wordLength + " character long.\n");
-
+        System.out.println("Hint: " + hint);
         for (int i = 0; i < word.length(); i++) {
             wordFill[i] = "_";
         }
@@ -159,41 +160,33 @@ public class Hangman {
         }
     }
 
-    public static String getWord() {
+    public static String[] getWord() {
 
         try {
             File wordFile = new File("WordList.csv");
             Scanner WordScanner = new Scanner(wordFile);
             ArrayList<String> wordList = new ArrayList<>();
+            ArrayList<String> hintList = new ArrayList<>();
             while (WordScanner.hasNextLine()) {
-                wordList.add(WordScanner.nextLine());
-                int randomIndex = ThreadLocalRandom.current().nextInt(0, wordList.size());
-                String wordGen = wordList.get(randomIndex);
-                return wordGen;
+                String[] splittedWordList = WordScanner.nextLine().split(",");
+                wordList.add(splittedWordList[0]);
+                hintList.add(splittedWordList[1]);
             }
+            WordScanner.close();
+            int randomIndex = ThreadLocalRandom.current().nextInt(0, wordList.size());
+            String wordGen = wordList.get(randomIndex);
+            String hintGen = hintList.get(randomIndex);
+            String[] finalRes = new String[2];
+            finalRes[0] = wordGen;
+            finalRes[1] = hintGen;
+            return finalRes;
+
         } catch (FileNotFoundException e) {
             System.out.println(e);
         }
-        return "";
+
+        return new String[2];
     }
-
-    // public static String getWord() {
-
-    // try {
-    // File wordFile = new File("Words.txt");
-    // Scanner WordScanner = new Scanner(wordFile);
-    // ArrayList<String> wordList = new ArrayList<>();
-    // while (WordScanner.hasNextLine()) {
-    // wordList.add(WordScanner.nextLine());
-    // int randomIndex = ThreadLocalRandom.current().nextInt(0, wordList.size());
-    // String wordGen = wordList.get(randomIndex);
-    // return wordGen;
-    // }
-    // } catch (FileNotFoundException e) {
-    // System.out.println(e);
-    // }
-    // return "";
-    // }
 
     public static void CheckWord(char userInput, String word) {
         String[] wordSplit = word.split("");
